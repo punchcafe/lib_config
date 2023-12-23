@@ -73,4 +73,13 @@ defmodule LibConfigTest do
                    fn -> LibConfigTestModule.validate!() end
     end
   end
+
+  describe "generated value functions" do
+    test "creates zero arity functions for defined env vars" do
+      Application.put_env(:my_test_app, :test_integer, 5)
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      assert LibConfigTestModule.test_integer() == 5
+      assert LibConfigTestModule.test_url() == "http://www.helloworld.com"
+    end
+  end
 end
