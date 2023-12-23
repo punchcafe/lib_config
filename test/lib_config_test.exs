@@ -17,12 +17,6 @@ defmodule LibConfigTest do
       ]
   end
 
-  test "validates a config list when correct" do
-    Application.put_env(:my_test_app, :test_integer, 5)
-    Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
-    assert LibConfigTestModule.validate() == :ok
-  end
-
   test "adds private function __lib_config_field__(:app_name)" do
     assert :my_test_app == LibConfigTestModule.__lib_config_field__(:app_name)
   end
@@ -40,18 +34,43 @@ defmodule LibConfigTest do
            ] == LibConfigTestModule.__lib_config_field__(:definition)
   end
 
-  test "raises an exception when invalid application config" do
-    Application.put_env(:my_test_app, :test_integer, "not_an_integer")
-    Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+  describe "validate/0" do
+    test "validates a config list when correct" do
+      Application.put_env(:my_test_app, :test_integer, 5)
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      assert LibConfigTestModule.validate() == :ok
+    end
 
-    assert LibConfigTestModule.validate() ==
-             {:error,
-              %NimbleOptions.ValidationError{
-                message:
-                  "invalid value for :test_integer option: expected non negative integer, got: \"not_an_integer\"",
-                key: :test_integer,
-                value: "not_an_integer",
-                keys_path: []
-              }}
+    test "returns an error when invalid application config" do
+      Application.put_env(:my_test_app, :test_integer, "not_an_integer")
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+
+      assert LibConfigTestModule.validate() ==
+               {:error,
+                %NimbleOptions.ValidationError{
+                  message:
+                    "invalid value for :test_integer option: expected non negative integer, got: \"not_an_integer\"",
+                  key: :test_integer,
+                  value: "not_an_integer",
+                  keys_path: []
+                }}
+    end
+  end
+
+  describe "validate!/0" do
+    test "validates a config list when correct" do
+      Application.put_env(:my_test_app, :test_integer, 5)
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      assert LibConfigTestModule.validate!() == :ok
+    end
+
+    test "raises an exception when invalid application config" do
+      Application.put_env(:my_test_app, :test_integer, "not_an_integer")
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+
+      assert_raise LibConfig.Error,
+                   "Configuration error for application my_test_app: %NimbleOptions.ValidationError{message: \"invalid value for :test_integer option: expected non negative integer, got: \\\"not_an_integer\\\"\", key: :test_integer, value: \"not_an_integer\", keys_path: []}",
+                   fn -> LibConfigTestModule.validate!() end
+    end
   end
 end

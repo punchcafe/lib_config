@@ -3,6 +3,19 @@ defmodule LibConfig do
   Documentation for `LibConfig`.
   """
 
+  alias __MODULE__.Error
+
+  def validate!(module) do
+    case validate(module) do
+      :ok ->
+        :ok
+
+      {:error, error} ->
+        app_name = module.__lib_config_field__(:app_name)
+        raise Error, message: "Configuration error for application #{app_name}: #{inspect(error)}"
+    end
+  end
+
   def validate(module) do
     definition = module.__lib_config_field__(:definition)
     all_envs = Application.get_all_env(module.__lib_config_field__(:app_name))
@@ -20,9 +33,8 @@ defmodule LibConfig do
       def __lib_config_field__(:app_name), do: unquote(app_name)
       def __lib_config_field__(:definition), do: unquote(Macro.escape(definition))
 
-      def validate() do
-        LibConfig.validate(__MODULE__)
-      end
+      def validate(), do: LibConfig.validate(__MODULE__)
+      def validate!(), do: LibConfig.validate!(__MODULE__)
     end
   end
 end
