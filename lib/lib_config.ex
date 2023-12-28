@@ -42,6 +42,12 @@ defmodule LibConfig do
     end
   end
 
+  @valid_function_names ~r/^[a-z_][A-z!?_]+$/
+
+  defp should_make_function?(function_name) when is_atom(function_name) do
+    function_name |> to_string() |> String.match?(@valid_function_names)
+  end
+
   defp generate_env_functions(app_name, definition) do
     all_keys = Keyword.keys(definition)
 
@@ -50,12 +56,16 @@ defmodule LibConfig do
       quote do
       end,
       fn key, def_accumulator ->
-        quote do
-          unquote(def_accumulator)
+        if should_make_function?(key) do
+          quote do
+            unquote(def_accumulator)
 
-          def unquote(key)() do
-            Application.get_env(unquote(app_name), unquote(key))
+            def unquote(key)() do
+              Application.get_env(unquote(app_name), unquote(key))
+            end
           end
+        else
+          def_accumulator
         end
       end
     )

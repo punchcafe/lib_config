@@ -13,7 +13,8 @@ defmodule LibConfigTest do
         test_url: [
           type: :string,
           required: true
-        ]
+        ],
+        "2invalid_name_key": [type: :string, required: false]
       ]
   end
 
@@ -30,7 +31,8 @@ defmodule LibConfigTest do
              test_url: [
                type: :string,
                required: true
-             ]
+             ],
+             "2invalid_name_key": [type: :string, required: false]
            ] == LibConfigTestModule.__lib_config_field__(:definition)
   end
 
@@ -80,6 +82,16 @@ defmodule LibConfigTest do
       Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
       assert LibConfigTestModule.test_integer() == 5
       assert LibConfigTestModule.test_url() == "http://www.helloworld.com"
+    end
+
+    test "doesn't create function if invalid function name" do
+      assert LibConfigTestModule.__info__(:functions) == [
+               __lib_config_field__: 1,
+               test_integer: 0,
+               test_url: 0,
+               validate: 0,
+               validate!: 0
+             ]
     end
   end
 end
