@@ -7,6 +7,7 @@ defmodule LibConfig.MixProject do
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: ["lib"] ++ if(Mix.env() == :test, do: ["test/support"], else: []),
       deps: deps()
     ]
   end
@@ -21,7 +22,8 @@ defmodule LibConfig.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nimble_options, "~> 1.0"}
+      {:nimble_options, "~> 1.0"},
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
   end
 end

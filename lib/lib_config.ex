@@ -49,17 +49,23 @@ defmodule LibConfig do
   end
 
   defp generate_env_functions(app_name, definition) do
-    all_keys = Keyword.keys(definition)
+    all_envs =
+      definition
+      |> Enum.map(fn opt_definition = {opt_key, _} ->
+        {^opt_key, typespec_type} = NimbleOptions.option_typespec([opt_definition])
+        {opt_key, typespec_type}
+      end)
 
     Enum.reduce(
-      all_keys,
+      all_envs,
       quote do
       end,
-      fn key, def_accumulator ->
+      fn {key, typespec_type}, def_accumulator ->
         if should_make_function?(key) do
           quote do
             unquote(def_accumulator)
 
+            @spec unquote(key)() :: unquote(typespec_type)
             def unquote(key)() do
               Application.get_env(unquote(app_name), unquote(key))
             end

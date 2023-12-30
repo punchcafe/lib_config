@@ -1,22 +1,5 @@
 defmodule LibConfigTest do
   use ExUnit.Case
-  doctest LibConfig
-
-  defmodule LibConfigTestModule do
-    use LibConfig,
-      app_name: :my_test_app,
-      definition: [
-        test_integer: [
-          type: :non_neg_integer,
-          required: true
-        ],
-        test_url: [
-          type: :string,
-          required: true
-        ],
-        "2invalid_name_key": [type: :string, required: false]
-      ]
-  end
 
   test "adds private function __lib_config_field__(:app_name)" do
     assert :my_test_app == LibConfigTestModule.__lib_config_field__(:app_name)
@@ -77,6 +60,7 @@ defmodule LibConfigTest do
   end
 
   describe "generated value functions" do
+    # TODO: add testing for generated specs
     test "creates zero arity functions for defined env vars" do
       Application.put_env(:my_test_app, :test_integer, 5)
       Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
