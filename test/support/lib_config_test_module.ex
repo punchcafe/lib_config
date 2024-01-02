@@ -10,6 +10,14 @@ defmodule LibConfigTestModule do
         type: :string,
         required: true
       ],
+      validate: [
+        type: :boolean,
+        required: true
+      ],
+      validate!: [
+        type: :boolean,
+        required: true
+      ],
       "2invalid_name_key": [type: :string, required: false]
     ]
 end

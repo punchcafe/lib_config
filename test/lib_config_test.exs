@@ -15,6 +15,14 @@ defmodule LibConfigTest do
                type: :string,
                required: true
              ],
+             validate: [
+               type: :boolean,
+               required: true
+             ],
+             validate!: [
+               type: :boolean,
+               required: true
+             ],
              "2invalid_name_key": [type: :string, required: false]
            ] == LibConfigTestModule.__lib_config_field__(:definition)
   end
@@ -46,12 +54,16 @@ defmodule LibConfigTest do
     test "validates a config list when correct" do
       Application.put_env(:my_test_app, :test_integer, 5)
       Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      Application.put_env(:my_test_app, :validate, true)
+      Application.put_env(:my_test_app, :validate!, false)
       assert LibConfigTestModule.validate!() == :ok
     end
 
     test "raises an exception when invalid application config" do
       Application.put_env(:my_test_app, :test_integer, "not_an_integer")
       Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      Application.put_env(:my_test_app, :validate, true)
+      Application.put_env(:my_test_app, :validate!, false)
 
       assert_raise LibConfig.Error,
                    "Configuration error for application my_test_app: %NimbleOptions.ValidationError{message: \"invalid value for :test_integer option: expected non negative integer, got: \\\"not_an_integer\\\"\", key: :test_integer, value: \"not_an_integer\", keys_path: []}",
@@ -64,10 +76,14 @@ defmodule LibConfigTest do
       Application.put_env(:my_test_app, :test_integer, 5)
       Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
       Application.put_env(:my_test_app, :"2invalid_name_key", "hello, world!")
+      Application.put_env(:my_test_app, :validate, true)
+      Application.put_env(:my_test_app, :validate!, true)
 
       assert LibConfigTestModule.env(:test_integer) == 5
       assert LibConfigTestModule.env(:test_url) == "http://www.helloworld.com"
       assert LibConfigTestModule.env(:"2invalid_name_key") == "hello, world!"
+      assert LibConfigTestModule.env(:validate) == true
+      assert LibConfigTestModule.env(:validate!) == true
     end
 
     test "it raises an function clause error if unknown environment" do

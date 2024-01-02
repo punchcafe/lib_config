@@ -27,12 +27,12 @@ defmodule LibConfig.Codegen do
 
     all_envs
     |> Enum.reduce({app_name, []}, &map_reduce_key_functions/2)
-    |> then(&{:__block__, [], &1})
+    |> then(fn {_, statements} -> {:__block__, [], statements} end)
   end
 
   defp map_reduce_key_functions({key, typespec_type}, {app_name, statement_acc}) do
     if should_skip_function?(key) do
-      statement_acc
+      {app_name, statement_acc}
     else
       {:__block__, _, statements} =
         quote do
@@ -45,6 +45,9 @@ defmodule LibConfig.Codegen do
       {app_name, statement_acc ++ statements}
     end
   end
+
+  defp should_skip_function?(function_name) when function_name in [:validate, :validate!],
+    do: true
 
   defp should_skip_function?(function_name) when is_atom(function_name) do
     function_name
