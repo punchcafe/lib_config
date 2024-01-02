@@ -59,6 +59,22 @@ defmodule LibConfigTest do
     end
   end
 
+  describe "env/1" do
+    test "it fetches application variables" do
+      Application.put_env(:my_test_app, :test_integer, 5)
+      Application.put_env(:my_test_app, :test_url, "http://www.helloworld.com")
+      Application.put_env(:my_test_app, :"2invalid_name_key", "hello, world!")
+
+      assert LibConfigTestModule.env(:test_integer) == 5
+      assert LibConfigTestModule.env(:test_url) == "http://www.helloworld.com"
+      assert LibConfigTestModule.env(:"2invalid_name_key") == "hello, world!"
+    end
+
+    test "it raises an function clause error if unknown environment" do
+      assert_raise FunctionClauseError, fn -> LibConfigTestModule.env(:unknown_variable) end
+    end
+  end
+
   describe "generated value functions" do
     # TODO: add testing for generated specs
     test "creates zero arity functions for defined env vars" do
@@ -71,6 +87,7 @@ defmodule LibConfigTest do
     test "doesn't create function if invalid function name" do
       assert LibConfigTestModule.__info__(:functions) == [
                __lib_config_field__: 1,
+               env: 1,
                test_integer: 0,
                test_url: 0,
                validate: 0,
