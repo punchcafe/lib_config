@@ -4,6 +4,8 @@ defmodule LibConfig.Codegen do
 
   @valid_function_names ~r/^[a-z_][A-z!?_]+$/
 
+  @doc false
+  @spec generate_env_function(module, NimbleOptions.schema()) :: Macro.t()
   def generate_env_function(app_name, definition) do
     quote do
       @spec env(atom()) :: term()
@@ -13,6 +15,8 @@ defmodule LibConfig.Codegen do
     end
   end
 
+  @doc false
+  @spec generate_key_functions(module, NimbleOptions.schema()) :: Macro.t()
   def generate_key_functions(app_name, definition) do
     all_envs =
       definition

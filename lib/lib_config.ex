@@ -6,6 +6,7 @@ defmodule LibConfig do
   alias __MODULE__.Error
   import __MODULE__.Codegen
 
+  @spec validate!(atom()) :: :ok | no_return()
   def validate!(module) do
     case validate(module) do
       :ok ->
@@ -17,6 +18,7 @@ defmodule LibConfig do
     end
   end
 
+  @spec validate(atom()) :: :ok | {:error, struct()}
   def validate(module) do
     definition = module.__lib_config_field__(:definition)
     all_envs = Application.get_all_env(module.__lib_config_field__(:app_name))

@@ -22,6 +22,7 @@ defmodule LibConfig.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:dialyxir, ">= 0.0.0"},
       {:nimble_options, "~> 1.0"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
