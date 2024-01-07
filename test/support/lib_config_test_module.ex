@@ -1,6 +1,6 @@
 defmodule LibConfigTestModule do
   use LibConfig,
-    app_name: :my_test_app,
+    otp_app: :my_test_app,
     definition: [
       test_integer: [
         type: :non_neg_integer,

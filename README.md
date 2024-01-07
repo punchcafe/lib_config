@@ -20,7 +20,7 @@ Let's demonstrate what it can do by using it for an imaginary app, `:alchemy_cof
 defmodule AlchemyCoffee.Configuration do
 
   use LibConfig,
-    app_name: :alchemy_coffee,
+    otp_app: :alchemy_coffee,
     definition: [
       coffee_price: [
         type: :non_neg_integer,
@@ -35,7 +35,7 @@ end
 ```
 
 The module doesn't need to be called `Configuration`, it can be whatever you need. We've passed it two options:
-- `:app_name`: which is the otp application's name
+- `:otp_app`: which is the otp application's name
 - `:definition`: This is a [NimbleOptions schema](https://hexdocs.pm/nimble_options/NimbleOptions.html#t:schema/0) definition of all the configuration terms the application accepts and requires.
 
 In this example, we've created a module for the otp app `alchemy_coffee`, and declared that this app requires two configuration parameters: a non negative integer called `:coffee_price`, and a string token called `:secret_witches_token`.

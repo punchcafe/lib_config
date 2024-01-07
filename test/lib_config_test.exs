@@ -1,8 +1,8 @@
 defmodule LibConfigTest do
   use ExUnit.Case
 
-  test "adds private function __lib_config_field__(:app_name)" do
-    assert :my_test_app == LibConfigTestModule.__lib_config_field__(:app_name)
+  test "adds private function __lib_config_field__(:otp_app)" do
+    assert :my_test_app == LibConfigTestModule.__lib_config_field__(:otp_app)
   end
 
   test "adds private function __lib_config_field__(:definition)" do
